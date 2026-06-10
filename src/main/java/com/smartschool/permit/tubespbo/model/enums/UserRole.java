@@ -8,6 +8,11 @@ package com.smartschool.permit.tubespbo.model.enums;
  *
  * @author Doni354
  */
-public class UserRole {
-    
+public enum UserRole {
+    SUPER_ADMIN,
+    ADMIN_PIKET;
+
+    public boolean isSuperAdmin() {
+        return this == SUPER_ADMIN;
+    }
 }

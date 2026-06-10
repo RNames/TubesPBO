@@ -8,6 +8,7 @@ package com.smartschool.permit.tubespbo.model.enums;
  *
  * @author Doni354
  */
-public class PermitStatus {
-    
+public enum PermitStatus {
+    PENDING,
+    APPROVED
 }
