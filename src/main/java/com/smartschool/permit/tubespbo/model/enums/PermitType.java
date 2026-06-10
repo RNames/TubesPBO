@@ -8,6 +8,7 @@ package com.smartschool.permit.tubespbo.model.enums;
  *
  * @author Doni354
  */
-public class NewClass {
-    
+public enum PermitType {
+    LATE_ENTRY,
+    EXIT_PERMIT
 }
