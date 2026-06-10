@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author Doni354
  */
-public interface CrudRepository {
+public interface CrudRepository<T> {
     List<T> getAll();
     T getById(String id);
     String create(T entity);
