@@ -10,6 +10,8 @@ import com.smartschool.permit.tubespbo.app.UserSession;
 import com.smartschool.permit.tubespbo.model.AdminUser;
 import com.smartschool.permit.tubespbo.model.enums.UserRole;
 import com.smartschool.permit.tubespbo.repository.AdminRepository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserRecord;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -87,5 +89,15 @@ public class AdminService {
 
     public void deleteAdmin(String uid) {
         adminRepo.delete(uid);
+    }
+
+    public void changePassword(String uid, String newPassword) throws Exception {
+        try {
+            UserRecord.UpdateRequest request = new UserRecord.UpdateRequest(uid)
+                    .setPassword(newPassword);
+            FirebaseAuth.getInstance().updateUser(request);
+        } catch (Exception e) {
+            throw new Exception("Gagal mereset password akun: " + e.getMessage());
+        }
     }
 }
