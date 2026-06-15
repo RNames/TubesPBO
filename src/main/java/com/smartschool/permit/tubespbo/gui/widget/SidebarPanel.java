@@ -20,7 +20,7 @@ public class SidebarPanel extends JPanel {
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
         setPreferredSize(new Dimension(200, 0));
 
-        JLabel titleLabel = new JLabel("SMA 1 Rejotangan");
+        JLabel titleLabel = new JLabel("SMAN 1 Rejotangan");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
