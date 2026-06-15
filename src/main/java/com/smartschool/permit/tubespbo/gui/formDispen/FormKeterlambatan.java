@@ -513,6 +513,11 @@ public class FormKeterlambatan extends javax.swing.JFrame {
                 permit.setReason(alasan);
                 permit.setType(com.smartschool.permit.tubespbo.model.enums.PermitType.LATE_ENTRY);
                 permit.setSchoolId("sch_001");
+                
+                // Set timestamps for web app compatibility
+                long now = System.currentTimeMillis();
+                permit.setTimestamp(now);
+                permit.setArrivalTimestamp(now);
 
                 return permitService.createPermit(permit);
             }

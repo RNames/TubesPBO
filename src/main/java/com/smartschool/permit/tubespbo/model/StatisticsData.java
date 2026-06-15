@@ -28,7 +28,8 @@ public class StatisticsData {
         for (StudentPermit p : permits) {
             if (p.isLateEntry()) totalLateEntry++;
             if (p.isExitPermit()) totalExitPermit++;
-            if (p.isPending()) pendingCount++;
+            // Hanya hitung pending jika status ADA (bukan null) dan bernilai PENDING
+            if (p.getStatus() != null && p.isPending()) pendingCount++;
 
             ZonedDateTime pDate = Instant.ofEpochMilli(p.getTimestamp()).atZone(ZoneId.of("Asia/Jakarta"));
             if (pDate.getDayOfYear() == todayDay && pDate.getYear() == todayYear) {

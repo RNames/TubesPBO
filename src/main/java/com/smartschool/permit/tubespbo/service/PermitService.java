@@ -37,7 +37,8 @@ public class PermitService {
     public String createPermit(StudentPermit permit) {
         long now = System.currentTimeMillis();
         permit.setTimestamp(now);
-        permit.setStatus(PermitStatus.PENDING);
+        permit.setCreatedAt(com.google.cloud.Timestamp.now());
+        permit.setStatus(com.smartschool.permit.tubespbo.model.enums.PermitStatus.PENDING);
         permit.setTahunAjaran(SchoolUtils.getTahunAjaran(now));
         if (permit.getSchoolId() == null || permit.getSchoolId().isEmpty()) {
         permit.setSchoolId(UserSession.getInstance().getSchoolId());

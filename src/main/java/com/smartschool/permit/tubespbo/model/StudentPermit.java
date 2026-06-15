@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.smartschool.permit.tubespbo.model;
+import com.google.cloud.Timestamp;
 import com.smartschool.permit.tubespbo.model.enums.PermitStatus;
 import com.smartschool.permit.tubespbo.model.enums.PermitType;
 import java.time.Instant;
@@ -21,6 +22,7 @@ public class StudentPermit extends BaseModel implements Exportable, Filterable {
     private String className;
     private String reason;
     private long timestamp;
+    private Timestamp createdAt;
     private String schoolId;
     private String tahunAjaran;
     private PermitStatus status = PermitStatus.PENDING;
@@ -74,16 +76,27 @@ public class StudentPermit extends BaseModel implements Exportable, Filterable {
         map.put("className", className);
         map.put("reason", reason);
         map.put("timestamp", timestamp);
+        if (createdAt != null) map.put("createdAt", createdAt);
         map.put("schoolId", schoolId);
         map.put("tahunAjaran", tahunAjaran);
-        map.put("status", status != null ? status.name() : null);
-        map.put("approvedBy", approvedBy);
-        map.put("approvedById", approvedById);
-        map.put("approvedAt", approvedAt);
-        map.put("isSuperAdminApproved", isSuperAdminApproved);
-        map.put("arrivalTimestamp", arrivalTimestamp);
-        map.put("exitTimestamp", exitTimestamp);
-        map.put("returnTimestamp", returnTimestamp);
+        if (status != null) map.put("status", status.name());
+
+        // Field spesifik berdasarkan tipe (sesuai web app)
+        if (isLateEntry()) {
+            if (arrivalTimestamp > 0) map.put("arrivalTimestamp", arrivalTimestamp);
+        } else if (isExitPermit()) {
+            if (returnTimestamp > 0) map.put("returnTimestamp", returnTimestamp);
+            if (exitTimestamp > 0) map.put("exitTimestamp", exitTimestamp);
+        }
+
+        // Field approval (hanya jika sudah di-approve)
+        if (status == PermitStatus.APPROVED) {
+            map.put("approvedBy", approvedBy);
+            map.put("approvedById", approvedById);
+            map.put("approvedAt", approvedAt);
+            map.put("isSuperAdminApproved", isSuperAdminApproved);
+        }
+        
         return map;
     }
 
@@ -95,9 +108,12 @@ public class StudentPermit extends BaseModel implements Exportable, Filterable {
         this.className = (String) map.get("className");
         this.reason = (String) map.get("reason");
         if (map.get("timestamp") != null) this.timestamp = ((Number) map.get("timestamp")).longValue();
+        if (map.get("createdAt") != null) this.createdAt = (Timestamp) map.get("createdAt");
         this.schoolId = (String) map.get("schoolId");
         this.tahunAjaran = (String) map.get("tahunAjaran");
         if (map.get("status") != null) this.status = PermitStatus.valueOf((String) map.get("status"));
+        else this.status = null; // Explicit null if missing in Firestore (old data)
+
         this.approvedBy = (String) map.get("approvedBy");
         this.approvedById = (String) map.get("approvedById");
         if (map.get("approvedAt") != null) this.approvedAt = ((Number) map.get("approvedAt")).longValue();
@@ -137,6 +153,8 @@ public class StudentPermit extends BaseModel implements Exportable, Filterable {
     public void setReason(String reason) { this.reason = reason; }
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
     public String getSchoolId() { return schoolId; }
     public void setSchoolId(String schoolId) { this.schoolId = schoolId; }
     public String getTahunAjaran() { return tahunAjaran; }

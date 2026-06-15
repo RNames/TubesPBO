@@ -625,6 +625,12 @@ public class FormDispensasi extends javax.swing.JFrame {
                 permit.setReason(alasan);
                 permit.setType(com.smartschool.permit.tubespbo.model.enums.PermitType.EXIT_PERMIT);
                 permit.setSchoolId("sch_001");
+                
+                // Set timestamps for web app compatibility
+                long now = System.currentTimeMillis();
+                permit.setTimestamp(now); 
+                permit.setExitTimestamp(now);
+                permit.setReturnTimestamp(now + 3600000); // Default return +1 hour
 
                 return permitService.createPermit(permit);
             }
