@@ -1,0 +1,17 @@
+package com.mycompany.gui.dashboard;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class BlankPanel extends JPanel {
+
+    public BlankPanel(String menuName) {
+        setLayout(new BorderLayout());
+        
+        JLabel label = new JLabel("Halaman " + menuName + " Belum Diimplementasikan", SwingConstants.CENTER);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        label.setForeground(Color.GRAY);
+        
+        add(label, BorderLayout.CENTER);
+    }
+}
