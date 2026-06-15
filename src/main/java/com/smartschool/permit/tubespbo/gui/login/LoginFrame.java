@@ -3,6 +3,7 @@ package com.smartschool.permit.tubespbo.gui.login;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import com.smartschool.permit.tubespbo.gui.dashboard.DashboardUtama;
+import com.smartschool.permit.tubespbo.gui.formDispen.FormKeterlambatan;
 import com.smartschool.permit.tubespbo.service.AuthService;
 import com.smartschool.permit.tubespbo.repository.AdminRepository;
 
@@ -11,6 +12,7 @@ public class LoginFrame extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private JButton backButton;
 
     public LoginFrame() {
         initComponents();
@@ -24,6 +26,7 @@ public class LoginFrame extends JFrame {
         emailField = new JTextField();
         passwordField = new JPasswordField();
         loginButton = new JButton();
+        backButton = new JButton();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Admin Login");
@@ -58,6 +61,12 @@ public class LoginFrame extends JFrame {
         loginButton.setText("Masuk");
         loginButton.addActionListener(this::handleLogin);
 
+        backButton.setText("Kembali");
+        backButton.addActionListener(e -> {
+            this.dispose();
+            new FormKeterlambatan().setVisible(true);
+        });
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -79,6 +88,8 @@ public class LoginFrame extends JFrame {
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(backButton)
+                .addGap(18, 18, 18)
                 .addComponent(loginButton)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -96,7 +107,9 @@ public class LoginFrame extends JFrame {
                     .addComponent(jLabel3)
                     .addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
-                .addComponent(loginButton)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(backButton)
+                    .addComponent(loginButton))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
 

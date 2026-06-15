@@ -25,7 +25,8 @@ public class AdminPanel extends JPanel {
     // Form fields
     private JTextField nameField, emailField;
     private JPasswordField passwordField;
-    private JButton addBtn, deleteBtn;
+    private JButton addBtn, deleteBtn, changePassBtn;
+    private JTable table;
 
     public AdminPanel() {
         initComponents();
@@ -47,7 +48,7 @@ public class AdminPanel extends JPanel {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
-        JTable table = new JTable(tableModel);
+        table = new JTable(tableModel);
         table.setFillsViewportHeight(true);
         table.setRowHeight(28);
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
@@ -102,9 +103,20 @@ public class AdminPanel extends JPanel {
             deleteAdmin(row);
         });
 
+        changePassBtn = new JButton("Ubah Password");
+        changePassBtn.addActionListener(e -> {
+            int row = table.getSelectedRow();
+            if (row < 0) {
+                JOptionPane.showMessageDialog(this, "Pilih admin yang ingin diubah passwordnya!", "Info", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            changeAdminPassword(row);
+        });
+
         JButton refreshBtn = new JButton("Refresh");
         refreshBtn.addActionListener(e -> loadData());
 
+        actionPanel.add(changePassBtn);
         actionPanel.add(deleteBtn);
         actionPanel.add(refreshBtn);
         bottomPanel.add(actionPanel, BorderLayout.SOUTH);
@@ -119,12 +131,14 @@ public class AdminPanel extends JPanel {
         boolean isSuperAdmin = UserSession.getInstance().isSuperAdmin();
         addBtn.setEnabled(isSuperAdmin);
         deleteBtn.setEnabled(isSuperAdmin);
+        changePassBtn.setEnabled(isSuperAdmin);
         nameField.setEnabled(isSuperAdmin);
         emailField.setEnabled(isSuperAdmin);
         passwordField.setEnabled(isSuperAdmin);
         if (!isSuperAdmin) {
             addBtn.setToolTipText("Hanya Super Admin yang bisa menambah admin");
             deleteBtn.setToolTipText("Hanya Super Admin yang bisa menghapus admin");
+            changePassBtn.setToolTipText("Hanya Super Admin yang bisa mengubah password");
         }
     }
 
@@ -237,6 +251,53 @@ public class AdminPanel extends JPanel {
                         loadData();
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(AdminPanel.this, "Gagal hapus: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }.execute();
+        }
+    }
+
+    private void changeAdminPassword(int row) {
+        if (currentAdmins == null || row >= currentAdmins.size()) return;
+        AdminUser target = currentAdmins.get(row);
+
+        // Hanya boleh ganti password admin biasa
+        if (target.getRole() == com.smartschool.permit.tubespbo.model.enums.UserRole.SUPER_ADMIN) {
+            JOptionPane.showMessageDialog(this, "Tidak bisa mengubah password sesama Super Admin!", "Akses Ditolak", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JPasswordField pf = new JPasswordField();
+        int okCxl = JOptionPane.showConfirmDialog(null, pf, "Masukkan Password Baru untuk " + target.getName(), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (okCxl == JOptionPane.OK_OPTION) {
+            String newPassword = new String(pf.getPassword());
+            if (newPassword.length() < 6) {
+                JOptionPane.showMessageDialog(this, "Password minimal 6 karakter!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            changePassBtn.setEnabled(false);
+            changePassBtn.setText("Memproses...");
+
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    adminService.changePassword(target.getId(), newPassword);
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        get();
+                        JOptionPane.showMessageDialog(AdminPanel.this, "Password berhasil diubah!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (Exception ex) {
+                        String msg = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+                        JOptionPane.showMessageDialog(AdminPanel.this, "Gagal mengubah password: " + msg, "Error", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        changePassBtn.setEnabled(true);
+                        changePassBtn.setText("Ubah Password");
                     }
                 }
             }.execute();

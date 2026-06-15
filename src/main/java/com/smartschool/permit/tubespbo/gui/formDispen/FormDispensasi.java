@@ -10,6 +10,8 @@ package com.smartschool.permit.tubespbo.gui.formDispen;
  */
 public class FormDispensasi extends javax.swing.JFrame {
     
+    private javax.swing.JRadioButton RadioKelasAlphabetK;
+    private javax.swing.JCheckBox CheckKembali;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormDispensasi.class.getName());
 
     /**
@@ -81,9 +83,15 @@ public class FormDispensasi extends javax.swing.JFrame {
         jLabel7.setText("Kelas:");
         gbcForm.gridy++; Bottom.add(jLabel7, gbcForm);
         
-        javax.swing.JPanel kelasPanel = new javax.swing.JPanel(new java.awt.GridLayout(2, 5, 5, 5));
-        kelasPanel.add(RadioKelasAlphabetA); kelasPanel.add(RadioKelasAlphabetB); kelasPanel.add(RadioKelasAlphabetC); kelasPanel.add(RadioKelasAlphabetD); kelasPanel.add(RadioKelasAlphabetE);
-        kelasPanel.add(RadioKelasAlphabetF); kelasPanel.add(RadioKelasAlphabetG); kelasPanel.add(RadioKelasAlphabetH); kelasPanel.add(RadioKelasAlphabetI); kelasPanel.add(RadionKelasAlphabetJ);
+        RadioKelasAlphabetK = new javax.swing.JRadioButton("K");
+        RadioKelasAlphabetK.setVisible(false); // Default hide
+        buttonGroup2.add(RadioKelasAlphabetK); // Add to the existing buttonGroup2
+        
+        // levelListener logic moved into updateDipilih
+
+        javax.swing.JPanel kelasPanel = new javax.swing.JPanel(new java.awt.GridLayout(2, 6, 5, 5));
+        kelasPanel.add(RadioKelasAlphabetA); kelasPanel.add(RadioKelasAlphabetB); kelasPanel.add(RadioKelasAlphabetC); kelasPanel.add(RadioKelasAlphabetD); kelasPanel.add(RadioKelasAlphabetE); kelasPanel.add(RadioKelasAlphabetF);
+        kelasPanel.add(RadioKelasAlphabetG); kelasPanel.add(RadioKelasAlphabetH); kelasPanel.add(RadioKelasAlphabetI); kelasPanel.add(RadionKelasAlphabetJ); kelasPanel.add(RadioKelasAlphabetK);
         gbcForm.gridy++; Bottom.add(kelasPanel, gbcForm);
         
         jLabel8.setText("Dipilih: -");
@@ -102,10 +110,31 @@ public class FormDispensasi extends javax.swing.JFrame {
         gbcForm.gridy++; Bottom.add(new javax.swing.JLabel(" "), gbcForm);
         
         gbcForm.gridy++; Bottom.add(jLabel10, gbcForm);
+        
+        CheckKembali = new javax.swing.JCheckBox("Saya berencana kembali ke sekolah hari ini", true);
+        CheckKembali.addActionListener(e -> SpinnerTimer.setEnabled(CheckKembali.isSelected()));
+        gbcForm.gridy++; Bottom.add(CheckKembali, gbcForm);
+        
+        java.util.Calendar defaultTime = java.util.Calendar.getInstance();
+        defaultTime.add(java.util.Calendar.HOUR_OF_DAY, 1);
+        SpinnerTimer.setModel(new javax.swing.SpinnerDateModel(defaultTime.getTime(), null, null, java.util.Calendar.MINUTE));
+        SpinnerTimer.setEditor(new javax.swing.JSpinner.DateEditor(SpinnerTimer, "HH:mm"));
+        
         gbcForm.gridy++; Bottom.add(SpinnerTimer, gbcForm);
+        
+        jLabel11.setText("Hapus centang di atas jika Anda tidak berencana kembali hari ini.");
         gbcForm.gridy++; Bottom.add(jLabel11, gbcForm);
 
         java.awt.event.ActionListener updateDipilih = e -> {
+            if (RadioX.isSelected()) {
+                RadioKelasAlphabetK.setVisible(false);
+                if (RadioKelasAlphabetK.isSelected()) {
+                    buttonGroup2.clearSelection();
+                }
+            } else if (RadioXI.isSelected() || RadioXII.isSelected()) {
+                RadioKelasAlphabetK.setVisible(true);
+            }
+
             String t = "";
             if(RadioX.isSelected()) t="X";
             else if(RadioXI.isSelected()) t="XI";
@@ -122,13 +151,18 @@ public class FormDispensasi extends javax.swing.JFrame {
             else if(RadioKelasAlphabetH.isSelected()) k="H";
             else if(RadioKelasAlphabetI.isSelected()) k="I";
             else if(RadionKelasAlphabetJ.isSelected()) k="J";
+            else if(RadioKelasAlphabetK.isSelected()) k="K";
 
             if(!t.isEmpty() && !k.isEmpty()) {
                 jLabel8.setText("Dipilih: " + t + "-" + k);
+            } else if (!t.isEmpty()) {
+                jLabel8.setText("Dipilih: " + t);
+            } else {
+                jLabel8.setText("Dipilih: -");
             }
         };
 
-        javax.swing.JRadioButton[] radios = {RadioX, RadioXI, RadioXII, RadioKelasAlphabetA, RadioKelasAlphabetB, RadioKelasAlphabetC, RadioKelasAlphabetD, RadioKelasAlphabetE, RadioKelasAlphabetF, RadioKelasAlphabetG, RadioKelasAlphabetH, RadioKelasAlphabetI, RadionKelasAlphabetJ};
+        javax.swing.JRadioButton[] radios = {RadioX, RadioXI, RadioXII, RadioKelasAlphabetA, RadioKelasAlphabetB, RadioKelasAlphabetC, RadioKelasAlphabetD, RadioKelasAlphabetE, RadioKelasAlphabetF, RadioKelasAlphabetG, RadioKelasAlphabetH, RadioKelasAlphabetI, RadionKelasAlphabetJ, RadioKelasAlphabetK};
         for(javax.swing.JRadioButton r : radios) {
             r.addActionListener(updateDipilih);
         }
@@ -587,6 +621,7 @@ public class FormDispensasi extends javax.swing.JFrame {
         else if (RadioKelasAlphabetH.isSelected()) kelas = "H";
         else if (RadioKelasAlphabetI.isSelected()) kelas = "I";
         else if (RadionKelasAlphabetJ.isSelected()) kelas = "J";
+        else if (RadioKelasAlphabetK.isSelected()) kelas = "K";
         if (kelas.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, "Pilih kelas!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
@@ -611,6 +646,27 @@ public class FormDispensasi extends javax.swing.JFrame {
             return;
         }
 
+        // Ambil waktu dari Spinner
+        long calculatedReturnTimestamp = 0;
+        if (CheckKembali.isSelected()) {
+            java.util.Date selectedTime = (java.util.Date) SpinnerTimer.getValue();
+            java.util.Calendar timeCal = java.util.Calendar.getInstance();
+            timeCal.setTime(selectedTime);
+            int targetHour = timeCal.get(java.util.Calendar.HOUR_OF_DAY);
+            int targetMinute = timeCal.get(java.util.Calendar.MINUTE);
+            
+            java.util.Calendar returnCal = java.util.Calendar.getInstance();
+            returnCal.set(java.util.Calendar.HOUR_OF_DAY, targetHour);
+            returnCal.set(java.util.Calendar.MINUTE, targetMinute);
+            returnCal.set(java.util.Calendar.SECOND, 0);
+            
+            if (returnCal.getTimeInMillis() < System.currentTimeMillis()) {
+                returnCal.add(java.util.Calendar.DAY_OF_YEAR, 1);
+            }
+            calculatedReturnTimestamp = returnCal.getTimeInMillis();
+        }
+        final long finalReturnTimestamp = calculatedReturnTimestamp;
+
         // Simpan ke Firestore via PermitService
         ButtonNext.setEnabled(false);
         new javax.swing.SwingWorker<String, Void>() {
@@ -630,7 +686,7 @@ public class FormDispensasi extends javax.swing.JFrame {
                 long now = System.currentTimeMillis();
                 permit.setTimestamp(now); 
                 permit.setExitTimestamp(now);
-                permit.setReturnTimestamp(now + 3600000); // Default return +1 hour
+                permit.setReturnTimestamp(finalReturnTimestamp); // Menggunakan waktu yang diinput
 
                 return permitService.createPermit(permit);
             }
