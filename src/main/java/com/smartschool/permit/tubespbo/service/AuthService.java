@@ -30,7 +30,7 @@ public class AuthService {
     public AdminUser login(String email, String password) throws Exception {
         String urlStr = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + API_KEY;
         
-        URL url = new URL(urlStr);
+        URL url = java.net.URI.create(urlStr).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json; utf-8");

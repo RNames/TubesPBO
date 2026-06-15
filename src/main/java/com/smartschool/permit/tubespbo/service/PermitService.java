@@ -6,7 +6,6 @@ package com.smartschool.permit.tubespbo.service;
 import com.smartschool.permit.tubespbo.app.UserSession;
 import com.smartschool.permit.tubespbo.model.AdminUser;
 import com.smartschool.permit.tubespbo.model.StudentPermit;
-import com.smartschool.permit.tubespbo.model.enums.PermitStatus;
 import com.smartschool.permit.tubespbo.model.enums.PermitType;
 import com.smartschool.permit.tubespbo.repository.PermitRepository;
 import com.smartschool.permit.tubespbo.util.SchoolUtils;

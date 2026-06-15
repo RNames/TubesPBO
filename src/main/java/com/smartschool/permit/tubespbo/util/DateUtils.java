@@ -14,7 +14,7 @@ import java.util.Locale;
  */
 public class DateUtils {
     private static final ZoneId ZONE = ZoneId.of("Asia/Jakarta");
-    private static final Locale LOCALE_ID = new Locale("id", "ID");
+    private static final Locale LOCALE_ID = Locale.of("id", "ID");
 
     public static String formatDate(long timestamp) {
         ZonedDateTime zdt = Instant.ofEpochMilli(timestamp).atZone(ZONE);

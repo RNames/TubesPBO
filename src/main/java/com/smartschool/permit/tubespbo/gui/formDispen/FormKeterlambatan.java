@@ -4,14 +4,22 @@
  */
 package com.smartschool.permit.tubespbo.gui.formDispen;
 
+import com.smartschool.permit.tubespbo.model.StudentPermit;
+import com.smartschool.permit.tubespbo.model.enums.PermitType;
+import com.smartschool.permit.tubespbo.repository.PermitRepository;
+import com.smartschool.permit.tubespbo.service.PermitService;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.logging.Logger;
+
 /**
- *
- * @author riyan
+ * Form for Late Entries (Keterlambatan)
  */
 public class FormKeterlambatan extends javax.swing.JFrame {
     
-    private javax.swing.JRadioButton RadioAlphabetK;
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormKeterlambatan.class.getName());
+    private static final Logger logger = Logger.getLogger(FormKeterlambatan.class.getName());
+    private JRadioButton RadioAlphabetK;
 
     /**
      * Creates new form FormKeterlambatan
@@ -21,108 +29,138 @@ public class FormKeterlambatan extends javax.swing.JFrame {
         applyCustomStyles();
     }
 
+    /**
+     * This method is called from within the constructor to initialize the form.
+     */
+    private void initComponents() {
+        buttonGroup1 = new ButtonGroup();
+        buttonGroup2 = new ButtonGroup();
+        
+        jPanel1 = new JPanel();
+        jLabel1 = new JLabel("Catat Keterlambatan");
+        jLabel2 = new JLabel("SMAN 1 Rejotangan");
+        
+        jPanel2 = new JPanel();
+        jLabel3 = new JLabel("Nama Lengkap");
+        FieldNama = new JTextField();
+        jLabel4 = new JLabel("Tingkat & Kelas");
+        jLabel5 = new JLabel("Tingkat:");
+        RadioX = new JRadioButton("X");
+        RadioXI = new JRadioButton("XI");
+        RadioXII = new JRadioButton("XII");
+        jLabel6 = new JLabel("Kelas:");
+        RadioAlphabet = new JRadioButton("A");
+        RadioAlphabetB = new JRadioButton("B");
+        RadioAlphabetC = new JRadioButton("C");
+        RadioAlphabetD = new JRadioButton("D");
+        RadioAlphabetE = new JRadioButton("E");
+        RadioAlphabetF = new JRadioButton("F");
+        RadioAlphabetG = new JRadioButton("G");
+        RadioAlphabetH = new JRadioButton("H");
+        RadioAlphabetI = new JRadioButton("I");
+        RadioAlphabetJ = new JRadioButton("J");
+        RadioAlphabetK = new JRadioButton("K");
+        
+        jLabel7 = new JLabel("Dipilih: -");
+        jLabel8 = new JLabel("Alasan Keterlambatan:");
+        jScrollPane1 = new JScrollPane();
+        AreaReason = new JTextArea();
+        ButtonNext = new JButton("Lanjut ->");
+
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Form Keterlambatan - SMAN 1 Rejotangan");
+
+        AreaReason.setColumns(20);
+        AreaReason.setRows(5);
+        jScrollPane1.setViewportView(AreaReason);
+
+        GroupLayout layout = new GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 480, Short.MAX_VALUE));
+        layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 750, Short.MAX_VALUE));
+
+        pack();
+    }
+
     private void applyCustomStyles() {
         // 1. Center the Titles
         jPanel1.removeAll();
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
-        jLabel1.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        jLabel1.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 24));
-        jLabel2.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        jLabel2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.Y_AXIS));
+        jLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        jLabel1.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        jLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        jLabel2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         jPanel1.add(jLabel1);
-        jPanel1.add(javax.swing.Box.createVerticalStrut(5));
+        jPanel1.add(Box.createVerticalStrut(5));
         jPanel1.add(jLabel2);
         
-        // 2. Custom Action Buttons inside GridLayout
+        // 2. Custom Action Buttons
         ButtonNext.setVisible(false);
-        javax.swing.JButton newNextBtn = new javax.swing.JButton("Berikutnya");
-        newNextBtn.addActionListener(e -> submitLateEntry(newNextBtn));
+        JButton newNextBtn = new JButton("Berikutnya");
+        newNextBtn.addActionListener(e -> submitLateEntry());
         
-        javax.swing.JButton switchFormBtn = new javax.swing.JButton("Form Dispensasi");
+        JButton switchFormBtn = new JButton("Form Dispensasi");
         switchFormBtn.addActionListener(e -> {
             this.dispose();
             new FormDispensasi().setVisible(true);
         });
         
-        javax.swing.JPanel actionPanel = new javax.swing.JPanel(new java.awt.GridLayout(1, 2, 10, 0));
-        actionPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 15, 10));
+        JPanel actionPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        actionPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 15, 10));
         actionPanel.add(switchFormBtn);
         actionPanel.add(newNextBtn);
 
-        // 3. Rebuild jPanel2 Panel using GridBagLayout for perfect alignment
+        // 3. Rebuild jPanel2 using GridBagLayout
         jPanel2.removeAll();
-        jPanel2.setLayout(new java.awt.GridBagLayout());
-        java.awt.GridBagConstraints gbcForm = new java.awt.GridBagConstraints();
-        gbcForm.gridx = 0; gbcForm.gridy = 0; gbcForm.anchor = java.awt.GridBagConstraints.WEST;
-        gbcForm.insets = new java.awt.Insets(5, 10, 5, 10);
-        gbcForm.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel2.setLayout(new GridBagLayout());
+        GridBagConstraints gbcForm = new GridBagConstraints();
+        gbcForm.gridx = 0; gbcForm.gridy = 0; gbcForm.anchor = GridBagConstraints.WEST;
+        gbcForm.insets = new Insets(5, 10, 5, 10);
+        gbcForm.fill = GridBagConstraints.HORIZONTAL;
         gbcForm.weightx = 1.0;
 
-        jLabel2.setText("SMAN 1 Rejotangan");
-        jLabel4.setText("Tingkat & Kelas");
-        jLabel4.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
-        
-        jPanel2.add(jLabel3, gbcForm); // Nama Lengkap
+        jPanel2.add(jLabel3, gbcForm); 
         gbcForm.gridy++; jPanel2.add(FieldNama, gbcForm);
         
-        gbcForm.gridy++; jPanel2.add(new javax.swing.JLabel(" "), gbcForm);
+        gbcForm.gridy++; jPanel2.add(new JLabel(" "), gbcForm);
         
-        gbcForm.gridy++; jPanel2.add(jLabel4, gbcForm); // Tingkat & Kelas Heading
-        
-        jLabel5.setText("Tingkat:");
+        jLabel4.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        gbcForm.gridy++; jPanel2.add(jLabel4, gbcForm);
         gbcForm.gridy++; jPanel2.add(jLabel5, gbcForm);
         
-        javax.swing.JPanel tingkatPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 0));
+        JPanel tingkatPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
         tingkatPanel.add(RadioX); tingkatPanel.add(RadioXI); tingkatPanel.add(RadioXII);
         gbcForm.gridy++; jPanel2.add(tingkatPanel, gbcForm);
         
-        jLabel6.setText("Kelas:");
         gbcForm.gridy++; jPanel2.add(jLabel6, gbcForm);
         
-        RadioAlphabetK = new javax.swing.JRadioButton("K");
-        RadioAlphabetK.setVisible(false); // Default hide
-        
-        javax.swing.ButtonGroup buttonGroup2 = new javax.swing.ButtonGroup();
-        buttonGroup2.add(RadioAlphabet); buttonGroup2.add(RadioAlphabetB); buttonGroup2.add(RadioAlphabetC);
-        buttonGroup2.add(RadioAlphabetD); buttonGroup2.add(RadioAlphabetE); buttonGroup2.add(RadioAlphabetF);
-        buttonGroup2.add(RadioAlphabetG); buttonGroup2.add(RadioAlphabetH); buttonGroup2.add(RadioAlphabetI);
-        buttonGroup2.add(RadioAlphabetJ); buttonGroup2.add(RadioAlphabetK);
-
-        // levelListener logic moved into updateDipilih
-        javax.swing.JPanel kelasPanel = new javax.swing.JPanel(new java.awt.GridLayout(2, 6, 5, 5));
-        kelasPanel.add(RadioAlphabet); kelasPanel.add(RadioAlphabetB); kelasPanel.add(RadioAlphabetC); kelasPanel.add(RadioAlphabetD); kelasPanel.add(RadioAlphabetE); kelasPanel.add(RadioAlphabetF);
-        kelasPanel.add(RadioAlphabetG); kelasPanel.add(RadioAlphabetH); kelasPanel.add(RadioAlphabetI); kelasPanel.add(RadioAlphabetJ); kelasPanel.add(RadioAlphabetK);
+        JPanel kelasPanel = new JPanel(new GridLayout(2, 6, 5, 5));
+        kelasPanel.add(RadioAlphabet); kelasPanel.add(RadioAlphabetB); kelasPanel.add(RadioAlphabetC);
+        kelasPanel.add(RadioAlphabetD); kelasPanel.add(RadioAlphabetE); kelasPanel.add(RadioAlphabetF);
+        kelasPanel.add(RadioAlphabetG); kelasPanel.add(RadioAlphabetH); kelasPanel.add(RadioAlphabetI);
+        kelasPanel.add(RadioAlphabetJ); kelasPanel.add(RadioAlphabetK);
         gbcForm.gridy++; jPanel2.add(kelasPanel, gbcForm);
-
-        jLabel7.setText("Dipilih: -");
-        jLabel7.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
-        jLabel7.setForeground(new java.awt.Color(0, 102, 204));
+        
+        jLabel7.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        jLabel7.setForeground(new Color(0, 102, 204));
         gbcForm.gridy++; jPanel2.add(jLabel7, gbcForm);
         
-        gbcForm.gridy++; jPanel2.add(new javax.swing.JLabel(" "), gbcForm);
-        
-        jLabel8.setText("Alasan Keterlambatan:");
+        gbcForm.gridy++; jPanel2.add(new JLabel(" "), gbcForm);
         gbcForm.gridy++; jPanel2.add(jLabel8, gbcForm);
-        
-        gbcForm.gridy++; gbcForm.fill = java.awt.GridBagConstraints.BOTH; gbcForm.weighty = 1.0;
+        gbcForm.gridy++; gbcForm.fill = GridBagConstraints.BOTH; gbcForm.weighty = 1.0;
         jPanel2.add(jScrollPane1, gbcForm);
-        gbcForm.fill = java.awt.GridBagConstraints.HORIZONTAL; gbcForm.weighty = 0.0;
-        
-        java.awt.event.ActionListener updateDipilih = e -> {
+        gbcForm.fill = GridBagConstraints.HORIZONTAL; gbcForm.weighty = 0.0;
+
+        // Listeners
+        ActionListener updateDipilih = e -> {
             if (RadioX.isSelected()) {
                 RadioAlphabetK.setVisible(false);
-                if (RadioAlphabetK.isSelected()) {
-                    buttonGroup2.clearSelection();
-                }
-            } else if (RadioXI.isSelected() || RadioXII.isSelected()) {
+                if (RadioAlphabetK.isSelected()) buttonGroup2.clearSelection();
+            } else {
                 RadioAlphabetK.setVisible(true);
             }
 
-            String t = "";
-            if(RadioX.isSelected()) t="X";
-            else if(RadioXI.isSelected()) t="XI";
-            else if(RadioXII.isSelected()) t="XII";
-
+            String t = RadioX.isSelected() ? "X" : (RadioXI.isSelected() ? "XI" : (RadioXII.isSelected() ? "XII" : ""));
             String k = "";
             if(RadioAlphabet.isSelected()) k="A";
             else if(RadioAlphabetB.isSelected()) k="B";
@@ -136,349 +174,89 @@ public class FormKeterlambatan extends javax.swing.JFrame {
             else if(RadioAlphabetJ.isSelected()) k="J";
             else if(RadioAlphabetK.isSelected()) k="K";
 
-            if(!t.isEmpty() && !k.isEmpty()) {
-                jLabel7.setText("Dipilih: " + t + "-" + k);
-            } else if (!t.isEmpty()) {
-                jLabel7.setText("Dipilih: " + t);
-            } else {
-                jLabel7.setText("Dipilih: -");
-            }
+            if(!t.isEmpty() && !k.isEmpty()) jLabel7.setText("Dipilih: " + t + "-" + k);
+            else if (!t.isEmpty()) jLabel7.setText("Dipilih: " + t);
+            else jLabel7.setText("Dipilih: -");
         };
 
-        javax.swing.JRadioButton[] radios = {RadioX, RadioXI, RadioXII, RadioAlphabet, RadioAlphabetB, RadioAlphabetC, RadioAlphabetD, RadioAlphabetE, RadioAlphabetF, RadioAlphabetG, RadioAlphabetH, RadioAlphabetI, RadioAlphabetJ, RadioAlphabetK};
-        for(javax.swing.JRadioButton r : radios) {
-            r.addActionListener(updateDipilih);
-        }
+        JRadioButton[] radios = {RadioX, RadioXI, RadioXII, RadioAlphabet, RadioAlphabetB, RadioAlphabetC, RadioAlphabetD, RadioAlphabetE, RadioAlphabetF, RadioAlphabetG, RadioAlphabetH, RadioAlphabetI, RadioAlphabetJ, RadioAlphabetK};
+        for(JRadioButton r : radios) r.addActionListener(updateDipilih);
 
-        // 4. Form Box Wrapper (combines jPanel2 and buttons into one bordered box)
-        jPanel2.setBorder(null); // Remove original border
-        javax.swing.JPanel formBoxWrapper = new javax.swing.JPanel();
-        formBoxWrapper.setLayout(new javax.swing.BoxLayout(formBoxWrapper, javax.swing.BoxLayout.Y_AXIS));
-        formBoxWrapper.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        // Wrapper
+        JPanel formBoxWrapper = new JPanel();
+        formBoxWrapper.setLayout(new BoxLayout(formBoxWrapper, BoxLayout.Y_AXIS));
+        formBoxWrapper.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         formBoxWrapper.add(jPanel2);
         formBoxWrapper.add(actionPanel);
 
-        // 5. Main Wrapper
-        java.awt.Container cp = getContentPane();
+        Container cp = getContentPane();
         cp.removeAll();
-        cp.setLayout(new java.awt.BorderLayout());
+        cp.setLayout(new BorderLayout());
 
-        javax.swing.JPanel mainWrapper = new javax.swing.JPanel();
-        mainWrapper.setLayout(new javax.swing.BoxLayout(mainWrapper, javax.swing.BoxLayout.Y_AXIS));
-        mainWrapper.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        JPanel mainWrapper = new JPanel();
+        mainWrapper.setLayout(new BoxLayout(mainWrapper, BoxLayout.Y_AXIS));
+        mainWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainWrapper.add(jPanel1);
-        mainWrapper.add(javax.swing.Box.createVerticalStrut(18));
+        mainWrapper.add(Box.createVerticalStrut(18));
         mainWrapper.add(formBoxWrapper);
 
-        // Center the form horizontally and align to top
-        javax.swing.JPanel centeringPanel = new javax.swing.JPanel(new java.awt.GridBagLayout());
-        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
-        gbc.anchor = java.awt.GridBagConstraints.NORTH;
-        gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.insets = new java.awt.Insets(20, 40, 20, 40);
+        JPanel centeringPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0; gbc.weighty = 1.0;
+        gbc.insets = new Insets(20, 40, 20, 40);
         centeringPanel.add(mainWrapper, gbc);
 
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(centeringPanel);
+        JScrollPane scrollPane = new JScrollPane(centeringPanel);
         scrollPane.setBorder(null);
-        cp.add(scrollPane, java.awt.BorderLayout.CENTER);
+        cp.add(scrollPane, BorderLayout.CENTER);
 
-        // 5. Admin Button
-        javax.swing.JButton adminBtn = new javax.swing.JButton("Masuk sebagai Admin");
-        adminBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        JButton adminBtn = new JButton("Masuk sebagai Admin");
+        adminBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         adminBtn.addActionListener(e -> {
             this.dispose();
             new com.smartschool.permit.tubespbo.gui.login.LoginFrame().setVisible(true);
         });
         
-        javax.swing.JPanel footerPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         footerPanel.add(adminBtn);
-        cp.add(footerPanel, java.awt.BorderLayout.SOUTH);
+        cp.add(footerPanel, BorderLayout.SOUTH);
 
-        // 6. Setup Radio Button Groups
-        javax.swing.ButtonGroup buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup1.add(RadioX);
-        buttonGroup1.add(RadioXI);
-        buttonGroup1.add(RadioXII);
+        buttonGroup1.add(RadioX); buttonGroup1.add(RadioXI); buttonGroup1.add(RadioXII);
+        buttonGroup2.add(RadioAlphabet); buttonGroup2.add(RadioAlphabetB); buttonGroup2.add(RadioAlphabetC);
+        buttonGroup2.add(RadioAlphabetD); buttonGroup2.add(RadioAlphabetE); buttonGroup2.add(RadioAlphabetF);
+        buttonGroup2.add(RadioAlphabetG); buttonGroup2.add(RadioAlphabetH); buttonGroup2.add(RadioAlphabetI);
+        buttonGroup2.add(RadioAlphabetJ); buttonGroup2.add(RadioAlphabetK);
 
-        // buttonGroup2 setup has been moved up
-
-        cp.revalidate();
-        cp.repaint();
-        
-        // Ensure consistent window size and center on screen
-        this.setSize(480, 750);
-        this.setMinimumSize(new java.awt.Dimension(450, 700));
-        this.setLocationRelativeTo(null);
+        revalidate(); repaint();
+        setSize(480, 750);
+        setMinimumSize(new Dimension(450, 700));
+        setLocationRelativeTo(null);
     }
 
-
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        jSpinner1 = new javax.swing.JSpinner();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        FieldNama = new javax.swing.JTextField();
-        RadioAlphabetJ = new javax.swing.JRadioButton();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        RadioX = new javax.swing.JRadioButton();
-        RadioXI = new javax.swing.JRadioButton();
-        RadioXII = new javax.swing.JRadioButton();
-        jLabel6 = new javax.swing.JLabel();
-        RadioAlphabet = new javax.swing.JRadioButton();
-        RadioAlphabetB = new javax.swing.JRadioButton();
-        RadioAlphabetC = new javax.swing.JRadioButton();
-        RadioAlphabetD = new javax.swing.JRadioButton();
-        RadioAlphabetE = new javax.swing.JRadioButton();
-        RadioAlphabetF = new javax.swing.JRadioButton();
-        RadioAlphabetG = new javax.swing.JRadioButton();
-        RadioAlphabetH = new javax.swing.JRadioButton();
-        RadioAlphabetI = new javax.swing.JRadioButton();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        AreaReason = new javax.swing.JTextArea();
-        ButtonNext = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(660, 688));
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        jLabel1.setText("Catat Keterlambatan");
-
-        jLabel2.setText("SMAN 1 Renjotangan");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(268, 268, 268)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addContainerGap(265, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(44, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18))
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        jLabel3.setText("Nama Lengkap");
-
-        RadioAlphabetJ.setText("J");
-
-        jLabel4.setText("Kelas");
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
-        jLabel5.setText("Tingkatan");
-
-        RadioX.setText("X");
-
-        RadioXI.setText("XI");
-
-        RadioXII.setText("XII");
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
-        jLabel6.setText("Kelas");
-
-        RadioAlphabet.setText("A");
-        RadioAlphabet.addActionListener(this::RadioAlphabetActionPerformed);
-
-        RadioAlphabetB.setText("B");
-
-        RadioAlphabetC.setText("C");
-
-        RadioAlphabetD.setText("D");
-
-        RadioAlphabetE.setText("E");
-
-        RadioAlphabetF.setText("F");
-
-        RadioAlphabetG.setText("G");
-
-        RadioAlphabetH.setText("H");
-
-        RadioAlphabetI.setText("I");
-
-        jLabel7.setText("Dipilih:");
-
-        jLabel8.setText("Alasan Keterlambatan:");
-
-        AreaReason.setColumns(20);
-        AreaReason.setRows(5);
-        jScrollPane1.setViewportView(AreaReason);
-
-        ButtonNext.setText("Lanjut ->");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(FieldNama, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(RadioX)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioXI)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioXII))
-                            .addComponent(jLabel6)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(RadioAlphabet)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetB)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetC)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetD)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetF)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetG))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(RadioAlphabetH)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetI)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(RadioAlphabetJ))
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(269, 269, 269)
-                        .addComponent(ButtonNext)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(FieldNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(RadioX)
-                    .addComponent(RadioXI)
-                    .addComponent(RadioXII))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(RadioAlphabet)
-                    .addComponent(RadioAlphabetB)
-                    .addComponent(RadioAlphabetC)
-                    .addComponent(RadioAlphabetD)
-                    .addComponent(RadioAlphabetE)
-                    .addComponent(RadioAlphabetF)
-                    .addComponent(RadioAlphabetG))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(RadioAlphabetH)
-                    .addComponent(RadioAlphabetI)
-                    .addComponent(RadioAlphabetJ))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel7)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel8)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
-                .addComponent(ButtonNext)
-                .addGap(126, 126, 126))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(10, 10, 10)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void submitLateEntry(javax.swing.JButton submitBtn) {
-        // Validasi nama
+    private void submitLateEntry() {
         String nama = FieldNama.getText().trim();
         if (nama.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Nama lengkap harus diisi!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Nama lengkap harus diisi!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        // Format nama title case
+        
+        // Format to Title Case
         String[] words = nama.split("\\s+");
         StringBuilder sb = new StringBuilder();
         for (String w : words) {
-            if (!w.isEmpty()) {
-                sb.append(Character.toUpperCase(w.charAt(0))).append(w.substring(1).toLowerCase()).append(" ");
-            }
+            if (!w.isEmpty()) sb.append(Character.toUpperCase(w.charAt(0))).append(w.substring(1).toLowerCase()).append(" ");
         }
         nama = sb.toString().trim();
         FieldNama.setText(nama);
 
-        // Validasi tingkat
-        String tingkat = "";
-        if (RadioX.isSelected()) tingkat = "X";
-        else if (RadioXI.isSelected()) tingkat = "XI";
-        else if (RadioXII.isSelected()) tingkat = "XII";
+        String tingkat = RadioX.isSelected() ? "X" : (RadioXI.isSelected() ? "XI" : (RadioXII.isSelected() ? "XII" : ""));
         if (tingkat.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Pilih tingkat kelas!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Pilih tingkat kelas!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Validasi kelas
         String kelas = "";
         if (RadioAlphabet.isSelected()) kelas = "A";
         else if (RadioAlphabetB.isSelected()) kelas = "B";
@@ -491,127 +269,103 @@ public class FormKeterlambatan extends javax.swing.JFrame {
         else if (RadioAlphabetI.isSelected()) kelas = "I";
         else if (RadioAlphabetJ.isSelected()) kelas = "J";
         else if (RadioAlphabetK.isSelected()) kelas = "K";
+        
         if (kelas.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Pilih kelas!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Pilih kelas!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Validasi alasan
         String alasan = AreaReason.getText().trim();
         if (alasan.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Alasan keterlambatan harus diisi!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Alasan keterlambatan harus diisi!", "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         String fullKelas = tingkat + "-" + kelas;
         String finalNama = nama;
 
-        // Konfirmasi
-        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
-            "Apakah data yang Anda masukkan sudah benar?\n\nNama: " + finalNama + "\nKelas: " + fullKelas + "\nAlasan: " + alasan,
-            "Konfirmasi Simpan", javax.swing.JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Apakah data sudah benar?\n\nNama: " + finalNama + "\nKelas: " + fullKelas + "\nAlasan: " + alasan,
+            "Konfirmasi", JOptionPane.YES_NO_OPTION);
 
-        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
-            return;
-        }
+        if (confirm != JOptionPane.YES_OPTION) return;
 
-        // Simpan ke Firestore via PermitService
-        submitBtn.setEnabled(false);
-        new javax.swing.SwingWorker<String, Void>() {
+        setEnabled(false);
+        new SwingWorker<String, Void>() {
             @Override
             protected String doInBackground() throws Exception {
-                com.smartschool.permit.tubespbo.repository.PermitRepository permitRepo = new com.smartschool.permit.tubespbo.repository.PermitRepository();
-                com.smartschool.permit.tubespbo.service.PermitService permitService = new com.smartschool.permit.tubespbo.service.PermitService(permitRepo);
+                PermitRepository repo = new PermitRepository();
+                PermitService service = new PermitService(repo);
 
-                com.smartschool.permit.tubespbo.model.StudentPermit permit = new com.smartschool.permit.tubespbo.model.StudentPermit();
+                StudentPermit permit = new StudentPermit();
                 permit.setStudentName(finalNama);
                 permit.setClassName(fullKelas);
                 permit.setReason(alasan);
-                permit.setType(com.smartschool.permit.tubespbo.model.enums.PermitType.LATE_ENTRY);
+                permit.setType(PermitType.LATE_ENTRY);
                 permit.setSchoolId("sch_001");
                 
-                // Set timestamps for web app compatibility
                 long now = System.currentTimeMillis();
                 permit.setTimestamp(now);
                 permit.setArrivalTimestamp(now);
 
-                return permitService.createPermit(permit);
+                return service.createPermit(permit);
             }
 
             @Override
             protected void done() {
                 try {
                     String id = get();
-                    javax.swing.JOptionPane.showMessageDialog(FormKeterlambatan.this,
-                        "Keterlambatan berhasil dicatat!\nID: " + id + "\nNama: " + finalNama + "\nKelas: " + fullKelas,
-                        "Berhasil", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                    // Reset form
+                    JOptionPane.showMessageDialog(FormKeterlambatan.this, "Keterlambatan berhasil dicatat!\nID: " + id, "Berhasil", JOptionPane.INFORMATION_MESSAGE);
                     FieldNama.setText("");
                     AreaReason.setText("");
+                    buttonGroup1.clearSelection();
+                    buttonGroup2.clearSelection();
                     jLabel7.setText("Dipilih: -");
                 } catch (Exception ex) {
-                    String msg = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
-                    javax.swing.JOptionPane.showMessageDialog(FormKeterlambatan.this,
-                        "Gagal menyimpan: " + msg, "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(FormKeterlambatan.this, "Gagal: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } finally {
-                    submitBtn.setEnabled(true);
+                    setEnabled(true);
                 }
             }
         }.execute();
     }
 
-    private void RadioAlphabetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RadioAlphabetActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_RadioAlphabetActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new FormKeterlambatan().setVisible(true));
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea AreaReason;
-    private javax.swing.JButton ButtonNext;
-    private javax.swing.JTextField FieldNama;
-    private javax.swing.JRadioButton RadioAlphabet;
-    private javax.swing.JRadioButton RadioAlphabetB;
-    private javax.swing.JRadioButton RadioAlphabetC;
-    private javax.swing.JRadioButton RadioAlphabetD;
-    private javax.swing.JRadioButton RadioAlphabetE;
-    private javax.swing.JRadioButton RadioAlphabetF;
-    private javax.swing.JRadioButton RadioAlphabetG;
-    private javax.swing.JRadioButton RadioAlphabetH;
-    private javax.swing.JRadioButton RadioAlphabetI;
-    private javax.swing.JRadioButton RadioAlphabetJ;
-    private javax.swing.JRadioButton RadioX;
-    private javax.swing.JRadioButton RadioXI;
-    private javax.swing.JRadioButton RadioXII;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner jSpinner1;
-    // End of variables declaration//GEN-END:variables
+    private JTextArea AreaReason;
+    private JButton ButtonNext;
+    private JTextField FieldNama;
+    private JRadioButton RadioAlphabet;
+    private JRadioButton RadioAlphabetB;
+    private JRadioButton RadioAlphabetC;
+    private JRadioButton RadioAlphabetD;
+    private JRadioButton RadioAlphabetE;
+    private JRadioButton RadioAlphabetF;
+    private JRadioButton RadioAlphabetG;
+    private JRadioButton RadioAlphabetH;
+    private JRadioButton RadioAlphabetI;
+    private JRadioButton RadioAlphabetJ;
+    private JRadioButton RadioX;
+    private JRadioButton RadioXI;
+    private JRadioButton RadioXII;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
+    private JLabel jLabel7;
+    private JLabel jLabel8;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JScrollPane jScrollPane1;
+    private ButtonGroup buttonGroup1;
+    private ButtonGroup buttonGroup2;
 }

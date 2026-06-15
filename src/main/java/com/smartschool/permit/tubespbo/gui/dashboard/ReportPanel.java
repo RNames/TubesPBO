@@ -14,11 +14,14 @@ import com.smartschool.permit.tubespbo.service.ReportService;
 
 /**
  * Panel laporan rekap izin per siswa dan per bulan/kelas.
+ * Fitur: Ringkasan siswa, Rekap bulanan, Export XLSX.
  */
 public class ReportPanel extends JPanel {
 
     private DefaultTableModel summaryTableModel;
     private DefaultTableModel recapTableModel;
+    private JTable summaryTable;
+    private JTable recapTable;
     private JSpinner yearSpinner, monthSpinner;
     private final PermitRepository permitRepo = new PermitRepository();
     private final ReportService reportService = new ReportService(permitRepo);
@@ -44,12 +47,18 @@ public class ReportPanel extends JPanel {
         JPanel summaryPanel = new JPanel(new BorderLayout());
         summaryPanel.setBorder(BorderFactory.createTitledBorder("Ringkasan Per Siswa (Terbanyak)"));
 
+        JPanel sumTopPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton exportSumBtn = new JButton("Export XLSX");
+        exportSumBtn.addActionListener(e -> com.smartschool.permit.tubespbo.util.XlsxUtils.exportTable(summaryTable, "Rekap_Siswa"));
+        sumTopPanel.add(exportSumBtn);
+        summaryPanel.add(sumTopPanel, BorderLayout.NORTH);
+
         String[] sumCols = {"No", "Nama", "Kelas", "Terlambat", "Izin Keluar", "Total"};
         summaryTableModel = new DefaultTableModel(sumCols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
-        JTable summaryTable = new JTable(summaryTableModel);
+        summaryTable = new JTable(summaryTableModel);
         summaryTable.setRowHeight(25);
         summaryPanel.add(new JScrollPane(summaryTable), BorderLayout.CENTER);
 
@@ -69,6 +78,9 @@ public class ReportPanel extends JPanel {
         JButton filterBtn = new JButton("Tampilkan");
         filterBtn.addActionListener(e -> loadMonthlyRecap());
 
+        JButton exportRecapBtn = new JButton("Export XLSX");
+        exportRecapBtn.addActionListener(e -> com.smartschool.permit.tubespbo.util.XlsxUtils.exportTable(recapTable, "Rekap_Bulanan_" + yearSpinner.getValue() + "_" + monthSpinner.getValue()));
+
         filterPanel.add(new JLabel("Tahun: "));
         filterPanel.add(yearSpinner);
         filterPanel.add(Box.createHorizontalStrut(10));
@@ -76,6 +88,8 @@ public class ReportPanel extends JPanel {
         filterPanel.add(monthSpinner);
         filterPanel.add(Box.createHorizontalStrut(10));
         filterPanel.add(filterBtn);
+        filterPanel.add(Box.createHorizontalStrut(20));
+        filterPanel.add(exportRecapBtn);
         recapPanel.add(filterPanel, BorderLayout.NORTH);
 
         String[] recapCols = {"Kelas", "Terlambat", "Izin Keluar", "Total"};
@@ -83,7 +97,7 @@ public class ReportPanel extends JPanel {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
-        JTable recapTable = new JTable(recapTableModel);
+        recapTable = new JTable(recapTableModel);
         recapTable.setRowHeight(25);
         recapPanel.add(new JScrollPane(recapTable), BorderLayout.CENTER);
 

@@ -38,7 +38,7 @@ public class AdminService {
     public AdminUser createAdmin(String email, String password, String name, String schoolId) throws Exception {
         String urlStr = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + API_KEY;
         
-        URL url = new URL(urlStr);
+        URL url = java.net.URI.create(urlStr).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json; utf-8");
