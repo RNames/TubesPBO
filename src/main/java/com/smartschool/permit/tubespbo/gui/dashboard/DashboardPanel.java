@@ -103,11 +103,9 @@ public class DashboardPanel extends JPanel {
             protected void done() {
                 try {
                     get();
-                    // Update cards
+                    // Update cards — data per hari ini + pending total
                     cardLate.setText(String.valueOf(stats.getTodayLateCount()));
                     cardExit.setText(String.valueOf(stats.getTodayExitCount()));
-                    cardPending.setText(String.valueOf(stats.getTodayCount())); // User sees this as "Today's Total"? Or maybe pending?
-                    // "Menunggu ACC" should be stats.getPendingCount()
                     cardPending.setText(String.valueOf(stats.getPendingCount()));
                     cardTotal.setText(String.valueOf(permits.size()));
 

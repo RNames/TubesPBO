@@ -23,9 +23,19 @@ public class SidebarPanel extends JPanel {
         JLabel titleLabel = new JLabel("SMAN 1 Rejotangan");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
+
+        String userName = com.smartschool.permit.tubespbo.app.UserSession.getInstance().getCurrentUser() != null 
+                ? com.smartschool.permit.tubespbo.app.UserSession.getInstance().getCurrentUser().getName() 
+                : "Admin";
+        JLabel userLabel = new JLabel(userName);
+        userLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        userLabel.setForeground(new Color(100, 100, 100));
+        userLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        userLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 20, 10));
 
         add(titleLabel);
+        add(userLabel);
         add(new JSeparator());
         add(Box.createVerticalStrut(10));
 
