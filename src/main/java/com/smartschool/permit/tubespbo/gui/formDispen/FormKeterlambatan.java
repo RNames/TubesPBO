@@ -10,6 +10,7 @@ package com.smartschool.permit.tubespbo.gui.formDispen;
  */
 public class FormKeterlambatan extends javax.swing.JFrame {
     
+    private javax.swing.JRadioButton RadioAlphabetK;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FormKeterlambatan.class.getName());
 
     /**
@@ -78,9 +79,19 @@ public class FormKeterlambatan extends javax.swing.JFrame {
         jLabel6.setText("Kelas:");
         gbcForm.gridy++; jPanel2.add(jLabel6, gbcForm);
         
-        javax.swing.JPanel kelasPanel = new javax.swing.JPanel(new java.awt.GridLayout(2, 5, 5, 5));
-        kelasPanel.add(RadioAlphabet); kelasPanel.add(RadioAlphabetB); kelasPanel.add(RadioAlphabetC); kelasPanel.add(RadioAlphabetD); kelasPanel.add(RadioAlphabetE);
-        kelasPanel.add(RadioAlphabetF); kelasPanel.add(RadioAlphabetG); kelasPanel.add(RadioAlphabetH); kelasPanel.add(RadioAlphabetI); kelasPanel.add(RadioAlphabetJ);
+        RadioAlphabetK = new javax.swing.JRadioButton("K");
+        RadioAlphabetK.setVisible(false); // Default hide
+        
+        javax.swing.ButtonGroup buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup2.add(RadioAlphabet); buttonGroup2.add(RadioAlphabetB); buttonGroup2.add(RadioAlphabetC);
+        buttonGroup2.add(RadioAlphabetD); buttonGroup2.add(RadioAlphabetE); buttonGroup2.add(RadioAlphabetF);
+        buttonGroup2.add(RadioAlphabetG); buttonGroup2.add(RadioAlphabetH); buttonGroup2.add(RadioAlphabetI);
+        buttonGroup2.add(RadioAlphabetJ); buttonGroup2.add(RadioAlphabetK);
+
+        // levelListener logic moved into updateDipilih
+        javax.swing.JPanel kelasPanel = new javax.swing.JPanel(new java.awt.GridLayout(2, 6, 5, 5));
+        kelasPanel.add(RadioAlphabet); kelasPanel.add(RadioAlphabetB); kelasPanel.add(RadioAlphabetC); kelasPanel.add(RadioAlphabetD); kelasPanel.add(RadioAlphabetE); kelasPanel.add(RadioAlphabetF);
+        kelasPanel.add(RadioAlphabetG); kelasPanel.add(RadioAlphabetH); kelasPanel.add(RadioAlphabetI); kelasPanel.add(RadioAlphabetJ); kelasPanel.add(RadioAlphabetK);
         gbcForm.gridy++; jPanel2.add(kelasPanel, gbcForm);
 
         jLabel7.setText("Dipilih: -");
@@ -98,6 +109,15 @@ public class FormKeterlambatan extends javax.swing.JFrame {
         gbcForm.fill = java.awt.GridBagConstraints.HORIZONTAL; gbcForm.weighty = 0.0;
         
         java.awt.event.ActionListener updateDipilih = e -> {
+            if (RadioX.isSelected()) {
+                RadioAlphabetK.setVisible(false);
+                if (RadioAlphabetK.isSelected()) {
+                    buttonGroup2.clearSelection();
+                }
+            } else if (RadioXI.isSelected() || RadioXII.isSelected()) {
+                RadioAlphabetK.setVisible(true);
+            }
+
             String t = "";
             if(RadioX.isSelected()) t="X";
             else if(RadioXI.isSelected()) t="XI";
@@ -114,13 +134,18 @@ public class FormKeterlambatan extends javax.swing.JFrame {
             else if(RadioAlphabetH.isSelected()) k="H";
             else if(RadioAlphabetI.isSelected()) k="I";
             else if(RadioAlphabetJ.isSelected()) k="J";
+            else if(RadioAlphabetK.isSelected()) k="K";
 
             if(!t.isEmpty() && !k.isEmpty()) {
                 jLabel7.setText("Dipilih: " + t + "-" + k);
+            } else if (!t.isEmpty()) {
+                jLabel7.setText("Dipilih: " + t);
+            } else {
+                jLabel7.setText("Dipilih: -");
             }
         };
 
-        javax.swing.JRadioButton[] radios = {RadioX, RadioXI, RadioXII, RadioAlphabet, RadioAlphabetB, RadioAlphabetC, RadioAlphabetD, RadioAlphabetE, RadioAlphabetF, RadioAlphabetG, RadioAlphabetH, RadioAlphabetI, RadioAlphabetJ};
+        javax.swing.JRadioButton[] radios = {RadioX, RadioXI, RadioXII, RadioAlphabet, RadioAlphabetB, RadioAlphabetC, RadioAlphabetD, RadioAlphabetE, RadioAlphabetF, RadioAlphabetG, RadioAlphabetH, RadioAlphabetI, RadioAlphabetJ, RadioAlphabetK};
         for(javax.swing.JRadioButton r : radios) {
             r.addActionListener(updateDipilih);
         }
@@ -178,17 +203,7 @@ public class FormKeterlambatan extends javax.swing.JFrame {
         buttonGroup1.add(RadioXI);
         buttonGroup1.add(RadioXII);
 
-        javax.swing.ButtonGroup buttonGroup2 = new javax.swing.ButtonGroup();
-        buttonGroup2.add(RadioAlphabet);
-        buttonGroup2.add(RadioAlphabetB);
-        buttonGroup2.add(RadioAlphabetC);
-        buttonGroup2.add(RadioAlphabetD);
-        buttonGroup2.add(RadioAlphabetE);
-        buttonGroup2.add(RadioAlphabetF);
-        buttonGroup2.add(RadioAlphabetG);
-        buttonGroup2.add(RadioAlphabetH);
-        buttonGroup2.add(RadioAlphabetI);
-        buttonGroup2.add(RadioAlphabetJ);
+        // buttonGroup2 setup has been moved up
 
         cp.revalidate();
         cp.repaint();
@@ -253,7 +268,7 @@ public class FormKeterlambatan extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
+                .addGap(268, 268, 268)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1))
@@ -362,7 +377,7 @@ public class FormKeterlambatan extends javax.swing.JFrame {
                             .addComponent(jLabel8)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
+                        .addGap(269, 269, 269)
                         .addComponent(ButtonNext)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -404,9 +419,9 @@ public class FormKeterlambatan extends javax.swing.JFrame {
                 .addComponent(jLabel8)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                 .addComponent(ButtonNext)
-                .addGap(0, 0, 0))
+                .addGap(126, 126, 126))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -475,6 +490,7 @@ public class FormKeterlambatan extends javax.swing.JFrame {
         else if (RadioAlphabetH.isSelected()) kelas = "H";
         else if (RadioAlphabetI.isSelected()) kelas = "I";
         else if (RadioAlphabetJ.isSelected()) kelas = "J";
+        else if (RadioAlphabetK.isSelected()) kelas = "K";
         if (kelas.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, "Pilih kelas!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
