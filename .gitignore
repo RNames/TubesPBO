@@ -1,3 +1,6 @@
 /target/
 resources/serviceAccountKey.json
 src/main/resources/serviceAccountKey.json
+mvn_error.log
+mvn_build.log
+.agent/workflows/build-release.md
