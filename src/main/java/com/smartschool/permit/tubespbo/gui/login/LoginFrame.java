@@ -1,8 +1,10 @@
-package com.mycompany.gui.login;
+package com.smartschool.permit.tubespbo.gui.login;
 
 import java.awt.event.ActionEvent;
 import javax.swing.*;
-import com.mycompany.gui.dashboard.DashboardUtama;
+import com.smartschool.permit.tubespbo.gui.dashboard.DashboardUtama;
+import com.smartschool.permit.tubespbo.service.AuthService;
+import com.smartschool.permit.tubespbo.repository.AdminRepository;
 
 public class LoginFrame extends JFrame {
 
@@ -116,13 +118,37 @@ public class LoginFrame extends JFrame {
             return;
         }
 
-        if (email.equals("admin@sekolah.id") && password.equals("admin123")) {
-            JOptionPane.showMessageDialog(this, "Login berhasil! Selamat datang, Admin.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            new DashboardUtama().setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Email atau password salah!\n\nDemo: admin@sekolah.id / admin123", "Login Gagal", JOptionPane.ERROR_MESSAGE);
-        }
+        // Disable button & show loading
+        loginButton.setEnabled(false);
+        loginButton.setText("Memproses...");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+        // Run login in background thread to prevent UI freeze
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                AuthService authService = new AuthService(new AdminRepository());
+                authService.login(email, password);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get(); // will throw if login failed
+                    JOptionPane.showMessageDialog(LoginFrame.this, "Login berhasil! Selamat datang.", "Berhasil", JOptionPane.INFORMATION_MESSAGE);
+                    LoginFrame.this.dispose();
+                    new DashboardUtama().setVisible(true);
+                } catch (Exception ex) {
+                    String msg = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+                    JOptionPane.showMessageDialog(LoginFrame.this, msg, "Login Gagal", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    loginButton.setEnabled(true);
+                    loginButton.setText("Masuk");
+                    setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+            }
+        }.execute();
     }
 
     public static void main(String[] args) {

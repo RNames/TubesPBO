@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package com.mycompany.gui.formDispen;
+package com.smartschool.permit.tubespbo.gui.formDispen;
 
 /**
  *
@@ -173,7 +173,7 @@ public class FormDispensasi extends javax.swing.JFrame {
         adminBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         adminBtn.addActionListener(e -> {
             this.dispose();
-            new com.mycompany.gui.login.LoginFrame().setVisible(true);
+            new com.smartschool.permit.tubespbo.gui.login.LoginFrame().setVisible(true);
         });
         
         javax.swing.JPanel footerPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER));
@@ -548,7 +548,109 @@ public class FormDispensasi extends javax.swing.JFrame {
     }//GEN-LAST:event_RadioKelasAlphabetIActionPerformed
 
     private void ButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonNextActionPerformed
-        // TODO add your handling code here:
+        // Validasi nama
+        String nama = FieldNama.getText().trim();
+        if (nama.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Nama lengkap harus diisi!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        // Format nama title case
+        String[] words = nama.split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (String w : words) {
+            if (!w.isEmpty()) {
+                sb.append(Character.toUpperCase(w.charAt(0))).append(w.substring(1).toLowerCase()).append(" ");
+            }
+        }
+        nama = sb.toString().trim();
+        FieldNama.setText(nama);
+
+        // Validasi tingkat
+        String tingkat = "";
+        if (RadioX.isSelected()) tingkat = "X";
+        else if (RadioXI.isSelected()) tingkat = "XI";
+        else if (RadioXII.isSelected()) tingkat = "XII";
+        if (tingkat.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih tingkat kelas!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Validasi kelas
+        String kelas = "";
+        if (RadioKelasAlphabetA.isSelected()) kelas = "A";
+        else if (RadioKelasAlphabetB.isSelected()) kelas = "B";
+        else if (RadioKelasAlphabetC.isSelected()) kelas = "C";
+        else if (RadioKelasAlphabetD.isSelected()) kelas = "D";
+        else if (RadioKelasAlphabetE.isSelected()) kelas = "E";
+        else if (RadioKelasAlphabetF.isSelected()) kelas = "F";
+        else if (RadioKelasAlphabetG.isSelected()) kelas = "G";
+        else if (RadioKelasAlphabetH.isSelected()) kelas = "H";
+        else if (RadioKelasAlphabetI.isSelected()) kelas = "I";
+        else if (RadionKelasAlphabetJ.isSelected()) kelas = "J";
+        if (kelas.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih kelas!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Validasi alasan
+        String alasan = TextAreaAlasan.getText().trim();
+        if (alasan.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Alasan dispensasi harus diisi!", "Validasi Gagal", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String fullKelas = tingkat + "-" + kelas;
+        String finalNama = nama;
+
+        // Konfirmasi
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+            "Apakah data yang Anda masukkan sudah benar?\n\nNama: " + finalNama + "\nKelas: " + fullKelas + "\nAlasan: " + alasan,
+            "Konfirmasi Simpan", javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // Simpan ke Firestore via PermitService
+        ButtonNext.setEnabled(false);
+        new javax.swing.SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                com.smartschool.permit.tubespbo.repository.PermitRepository permitRepo = new com.smartschool.permit.tubespbo.repository.PermitRepository();
+                com.smartschool.permit.tubespbo.service.PermitService permitService = new com.smartschool.permit.tubespbo.service.PermitService(permitRepo);
+
+                com.smartschool.permit.tubespbo.model.StudentPermit permit = new com.smartschool.permit.tubespbo.model.StudentPermit();
+                permit.setStudentName(finalNama);
+                permit.setClassName(fullKelas);
+                permit.setReason(alasan);
+                permit.setType(com.smartschool.permit.tubespbo.model.enums.PermitType.EXIT_PERMIT);
+                permit.setSchoolId("sch_001");
+
+                return permitService.createPermit(permit);
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    String id = get();
+                    javax.swing.JOptionPane.showMessageDialog(FormDispensasi.this,
+                        "Dispensasi berhasil dicatat!\nID: " + id + "\nNama: " + finalNama + "\nKelas: " + fullKelas,
+                        "Berhasil", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    // Reset form
+                    FieldNama.setText("");
+                    TextAreaAlasan.setText("");
+                    buttonGroup1.clearSelection();
+                    buttonGroup2.clearSelection();
+                    jLabel8.setText("Dipilih: -");
+                } catch (Exception ex) {
+                    String msg = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
+                    javax.swing.JOptionPane.showMessageDialog(FormDispensasi.this,
+                        "Gagal menyimpan: " + msg, "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    ButtonNext.setEnabled(true);
+                }
+            }
+        }.execute();
     }//GEN-LAST:event_ButtonNextActionPerformed
 
     /**

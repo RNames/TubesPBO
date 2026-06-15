@@ -1,4 +1,4 @@
-package com.mycompany.gui.login;
+package com.smartschool.permit.tubespbo.gui.login;
 
 public class Main {
     public static void main(String[] args) {

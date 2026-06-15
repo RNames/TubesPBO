@@ -1,4 +1,4 @@
-package com.mycompany.gui.dashboard;
+package com.smartschool.permit.tubespbo.gui.dashboard;
 
 import javax.swing.*;
 import java.awt.*;

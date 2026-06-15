@@ -39,7 +39,9 @@ public class PermitService {
         permit.setTimestamp(now);
         permit.setStatus(PermitStatus.PENDING);
         permit.setTahunAjaran(SchoolUtils.getTahunAjaran(now));
+        if (permit.getSchoolId() == null || permit.getSchoolId().isEmpty()) {
         permit.setSchoolId(UserSession.getInstance().getSchoolId());
+    }
         return permitRepo.create(permit);
     }
 

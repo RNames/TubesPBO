@@ -1,9 +1,11 @@
-package com.mycompany.gui.dashboard;
+package com.smartschool.permit.tubespbo.gui.dashboard;
 
 import javax.swing.*;
 import java.awt.*;
-import com.mycompany.gui.login.LoginFrame;
-import com.mycompany.gui.widget.SidebarPanel;
+import com.smartschool.permit.tubespbo.gui.login.LoginFrame;
+import com.smartschool.permit.tubespbo.gui.widget.SidebarPanel;
+import com.smartschool.permit.tubespbo.service.AuthService;
+import com.smartschool.permit.tubespbo.repository.AdminRepository;
 
 public class DashboardUtama extends JFrame {
 
@@ -21,12 +23,12 @@ public class DashboardUtama extends JFrame {
         cardLayout = new CardLayout();
         mainContentPanel = new JPanel(cardLayout);
 
-        // Tambahkan halaman-halaman ke dalam CardLayout
+        // Tambahkan halaman-halaman fungsional ke dalam CardLayout
         mainContentPanel.add(new DashboardPanel(), "Dashboard");
-        mainContentPanel.add(new BlankPanel("Siswa Terlambat"), "Siswa Terlambat");
-        mainContentPanel.add(new BlankPanel("Izin Keluar"), "Izin Keluar");
-        mainContentPanel.add(new BlankPanel("Laporan"), "Laporan");
-        mainContentPanel.add(new BlankPanel("Kelola Admin"), "Kelola Admin");
+        mainContentPanel.add(new LateEntryPanel(), "Siswa Terlambat");
+        mainContentPanel.add(new ExitPermitPanel(), "Izin Keluar");
+        mainContentPanel.add(new ReportPanel(), "Laporan");
+        mainContentPanel.add(new AdminPanel(), "Kelola Admin");
 
         // Tambahkan komponen sidebar yang terpisah di sebelah kiri
         SidebarPanel sidebar = new SidebarPanel(
@@ -38,8 +40,11 @@ public class DashboardUtama extends JFrame {
             () -> {
                 int confirm = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin logout?", "Konfirmasi Logout", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    this.dispose(); // Tutup dashboard
-                    new LoginFrame().setVisible(true); // Buka kembali halaman login
+                    // Logout dari session
+                    AuthService authService = new AuthService(new AdminRepository());
+                    authService.logout();
+                    this.dispose();
+                    new LoginFrame().setVisible(true);
                 }
             }
         );
@@ -49,7 +54,6 @@ public class DashboardUtama extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Menggunakan look and feel standar dari sistem operasi
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {}

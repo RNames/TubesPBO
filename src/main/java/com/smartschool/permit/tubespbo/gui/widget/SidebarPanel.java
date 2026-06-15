@@ -1,4 +1,4 @@
-package com.mycompany.gui.widget;
+package com.smartschool.permit.tubespbo.gui.widget;
 
 import javax.swing.*;
 import java.awt.*;

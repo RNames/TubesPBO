@@ -15,6 +15,8 @@ import java.util.List;
 public class StatisticsData {
     private int totalLateEntry = 0;
     private int totalExitPermit = 0;
+    private int todayLateCount = 0;
+    private int todayExitCount = 0;
     private int pendingCount = 0;
     private int todayCount = 0;
 
@@ -31,6 +33,8 @@ public class StatisticsData {
             ZonedDateTime pDate = Instant.ofEpochMilli(p.getTimestamp()).atZone(ZoneId.of("Asia/Jakarta"));
             if (pDate.getDayOfYear() == todayDay && pDate.getYear() == todayYear) {
                 todayCount++;
+                if (p.isLateEntry()) todayLateCount++;
+                if (p.isExitPermit()) todayExitCount++;
             }
         }
     }
@@ -38,6 +42,8 @@ public class StatisticsData {
     // Getters and Setters
     public int getTotalLateEntry() { return totalLateEntry; }
     public int getTotalExitPermit() { return totalExitPermit; }
+    public int getTodayLateCount() { return todayLateCount; }
+    public int getTodayExitCount() { return todayExitCount; }
     public int getPendingCount() { return pendingCount; }
     public int getTodayCount() { return todayCount; }
 }
